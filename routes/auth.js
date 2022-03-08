@@ -9,8 +9,8 @@ router.post("/register", register);
 
 router.post("/login", login)
 
-const jwt = require("jsonwebtoken")
-const User = require("../models/User")
+// const jwt = require("jsonwebtoken")
+// const User = require("../models/User")
 
 router.get("/me", protect, getMe)
 // router.get("/me", async function(req, res) {

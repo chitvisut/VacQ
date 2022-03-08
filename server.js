@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const hospitals = require("./routes/hospitals");
+const appointments = require("./routes/appointments")
 const auth = require("./routes/auth");
 const connectDB = require("./config/db");
 
@@ -23,6 +24,7 @@ app.use(cookieParser());
 // });
 
 app.use("/api/v1/hospitals", hospitals); // match incoming url with router
+app.use("/api/v1/appointments", appointments)
 app.use("/api/v1/auth", auth)
 
 const PORT = process.env.PORT || 3000;
