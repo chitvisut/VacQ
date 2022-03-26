@@ -13,10 +13,19 @@ exports.getAppointments = async (req,res,next) => {
             select: "name province tel"
         });
     } else {
-        query = Appointment.find().populate({
-            path: "hospital",
-            select: "name province tel"
-        });
+        //add query all by hospital ID
+        if(req.params.hospitalId) {
+            query=Appointment.find({hospital:req.params.hospitalId}).populate({
+                path:'hospital',
+                select: 'name province tel'
+            });
+        } else {
+        //query all if there is no hospital ID
+            query = Appointment.find().populate({
+                path: "hospital",
+                select: "name province tel"
+            });
+        }
     }
     try {
         const appointments = await query;
@@ -85,14 +94,18 @@ exports.addAppointment = async (req,res,next) => {
 
         //add user.id to req.body and check number of appointment
         req.body.user = req.user.id
-        const existedAppointments = await Appointment.findById(req.user.id);
-        if (existedAppointments.length >= 3 && req.user.role !== "admin") {
-            return res.status(400).json({
-                success: false,
-                message: `The user with id ${req.user.id} has already made 3 appointments`
-            })
+        console.log(req.user.id)
+        const existedAppointments = await Appointment.find({user: req.user.id});
+        if (existedAppointments) {
+            console.log(existedAppointments.length)
+            if (existedAppointments.length >= 3 && req.user.role !== "admin") {
+                return res.status(400).json({
+                    success: false,
+                    message: `The user with id ${req.user.id} has already made 3 appointments`
+                })
+            }
         }
-
+        
         const appointment = await Appointment.create(req.body);
         res.status(200).json({
             success: true,
@@ -130,7 +143,7 @@ exports.updateAppointment = async (req,res,next) => {
             })
         }
 
-        appointment = await Appointment.findByIdAndUpdate(req.params.id, req.boy, {
+        appointment = await Appointment.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         });
