@@ -1,6 +1,6 @@
 const express = require("express");
 const res = require("express/lib/response");
-const{register, login, getMe} = require("../controllers/auth");
+const{register, login, getMe, logout} = require("../controllers/auth");
 const{protect} = require("../middleware/auth");
 
 const router = express.Router();
@@ -18,5 +18,7 @@ router.get("/me", protect, getMe)
 //     const user = await User.findById(x.id);
 //     res.status(400).json({success:true, user: user})
 // })
+
+router.get("/logout", logout)
 
 module.exports=router;

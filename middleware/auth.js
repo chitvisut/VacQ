@@ -9,7 +9,7 @@ exports.protect = async (req,res,next) => {
         //console.log(token)
     }
 
-    if (!token) {
+    if (!token || token=="null") {
         return res.status(400).json({success: false, msg: "not authorized to access this route"});
     }
 

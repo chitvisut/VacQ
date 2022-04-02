@@ -1,4 +1,10 @@
 const express = require("express");
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const rateLimit = require("express-rate-limit");
+const hpp = require("hpp")
+const cors = require("cors")
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const hospitals = require("./routes/hospitals");
@@ -13,6 +19,18 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(mongoSanitize());
+app.use(helmet());
+app.use(xss());
+app.use(hpp());
+
+const limiter = rateLimit({
+    windowMs: 1000*60*10, //10 mins
+    max: 100
+})
+
+app.use(limiter);
+app.use(cors());
 
 // app.get("/", (req,res) => {
 //     res.send('<h1>Hello from express</h1>');
