@@ -11,18 +11,35 @@ const hospitals = require("./routes/hospitals");
 const appointments = require("./routes/appointments")
 const auth = require("./routes/auth");
 const connectDB = require("./config/db");
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUI = require("swagger-ui-express");
 
 dotenv.config({path: './config/config.env'});
 //connect to database
 connectDB();
 
+const swaggerOptions={
+    swaggerDefinition:{
+        openapi: "3.0.0",
+        info: {
+            title: "Library API",
+            version: "1.0.0",
+            description: "A simple Epress VacQ API"
+        }
+    },
+    apis: ["./routes/*.js"],
+};
+
 const app = express();
+const swaggerDocs = swaggerJsDoc(swaggerOptions)
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(helmet());
 app.use(xss());
 app.use(hpp());
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 
 const limiter = rateLimit({
     windowMs: 1000*60*10, //10 mins
